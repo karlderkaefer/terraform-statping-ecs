@@ -1,0 +1,62 @@
+[
+  {
+    "name": "nginx",
+    "image": "peterpanne/ecs-nginx:0.0.4",
+    "cpu": 128,
+    "memory": 256,
+    "networkMode": "awsvpc",
+    "environment": [
+      {
+        "name": "STATPING_SERVER",
+        "value": "http://localhost:8080/"
+      }
+    ],
+    "portMappings": [
+      {
+        "containerPort": 80,
+        "hostPort": 80
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${awslogs_group}",
+        "awslogs-region": "eu-central-1",
+        "awslogs-stream-prefix": "nginx"
+      }
+    }
+  },
+  {
+    "name": "${app_name}",
+    "image": "${app_image}",
+    "cpu": 512,
+    "memory": 256,
+    "networkMode": "awsvpc",
+    "portMappings": [
+      {
+        "containerPort": 8080,
+        "hostPort": 8080
+      }
+    ],
+    "environment": [
+      {
+        "name": "DB_CONN",
+        "value": "sqlite"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${awslogs_group}",
+        "awslogs-region": "eu-central-1",
+        "awslogs-stream-prefix": "statping"
+      }
+    },
+    "mountPoints" : [
+      {
+        "containerPath" : "/app",
+        "sourceVolume" : "statping"
+      }
+    ]
+  }
+]
