@@ -16,13 +16,13 @@ resource "aws_security_group" "aws-lb" {
     protocol = "tcp"
     from_port = 80
     to_port = 80
-    cidr_blocks = [var.cluster_ssh_cidr]
+    cidr_blocks = var.cluster_ssh_cidr
   }
   ingress {
     protocol = "tcp"
     from_port = 443
     to_port = 443
-    cidr_blocks = [var.cluster_ssh_cidr]
+    cidr_blocks = var.cluster_ssh_cidr
   }
   egress {
     protocol = "-1"

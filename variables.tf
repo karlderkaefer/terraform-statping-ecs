@@ -19,8 +19,9 @@ variable "cluster_name" {
 }
 
 variable "cluster_ssh_cidr" {
-  default = ""
-  type = string
+  description = "restrict access to application from this ip and also restrict ssh access"
+  default = []
+  type = list(string)
 }
 
 variable "cluster_instance_type" {
