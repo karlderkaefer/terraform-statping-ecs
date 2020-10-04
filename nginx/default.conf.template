@@ -6,11 +6,6 @@ server {
     #charset koi8-r;
     #access_log  /var/log/nginx/host.access.log  main;
 
-    location /site {
-        root   /usr/share/nginx/html;
-        index  index.html index.htm;
-    }
-
     location / {
       proxy_pass ${STATPING_SERVER};
     }
