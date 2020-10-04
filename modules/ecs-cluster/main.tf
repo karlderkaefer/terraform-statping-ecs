@@ -86,32 +86,18 @@ resource "aws_launch_configuration" "main" {
     encrypted = true
   }
 
-  user_data = <<EOF
-#!/bin/bash
-# The cluster this agent should check into.
-echo 'ECS_CLUSTER=${aws_ecs_cluster.main.name}' >> /etc/ecs/ecs.config
-
-# Disable privileged containers.
-echo 'ECS_DISABLE_PRIVILEGED=true' >> /etc/ecs/ecs.config
-
-set -x
-
-#install the Docker volume plugin
-docker plugin install rexray/ebs REXRAY_PREEMPT=true EBS_REGION=${var.instance_region} --grant-all-permissions
-#restart the ECS agent
-stop ecs
-start ecs
-
-EOF
-
-
+  user_data = templatefile("${path.module}/templates/user_data.sh", {
+    cluster_name = aws_ecs_cluster.main.name,
+    instance_region = var.instance_region,
+  })
   lifecycle {
     create_before_destroy = true
   }
 }
 
 resource "aws_autoscaling_group" "main" {
-  name = "ecs-${local.cluster_name}"
+  # force recreation when configuration was changed
+  name = "ecs-${aws_launch_configuration.main.name}-asg"
 
   launch_configuration = aws_launch_configuration.main.id
   termination_policies = ["OldestLaunchConfiguration", "Default"]
