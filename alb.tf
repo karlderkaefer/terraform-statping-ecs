@@ -16,13 +16,13 @@ resource "aws_security_group" "aws-lb" {
     protocol = "tcp"
     from_port = 80
     to_port = 80
-    cidr_blocks = var.cluster_ssh_cidr
+    cidr_blocks = var.cluster_lb_cidr
   }
   ingress {
     protocol = "tcp"
     from_port = 443
     to_port = 443
-    cidr_blocks = var.cluster_ssh_cidr
+    cidr_blocks = var.cluster_lb_cidr
   }
   egress {
     protocol = "-1"
@@ -98,6 +98,7 @@ resource "aws_lb_listener" "http_redirect" {
 
 # add certificate
 data "aws_route53_zone" "default" {
+  count = var.cluster_enable_https ? 1 : 0
   name = var.cluster_hosted_zone_name
 }
 
@@ -107,7 +108,7 @@ module "acm" {
   version = "~> v2.0"
 
   domain_name  = var.statping_domain
-  zone_id      = data.aws_route53_zone.default.zone_id
+  zone_id      = data.aws_route53_zone.default[0].zone_id
 
   tags = local.tags
 }
@@ -117,7 +118,7 @@ resource "aws_route53_record" "default" {
   name = var.statping_domain
   type = "CNAME"
   ttl = 60
-  zone_id = data.aws_route53_zone.default.zone_id
+  zone_id = data.aws_route53_zone.default[0].zone_id
   records = [
     aws_alb.main.dns_name
   ]
