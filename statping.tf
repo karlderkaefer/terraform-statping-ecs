@@ -1,11 +1,12 @@
 # container template
 data "template_file" "statping_app" {
-  template = file("./templates/statping.json")
+  template = file("${path.module}/templates/statping.json")
   vars = {
     app_name = var.statping_app_name
     app_image = var.statping_app_image
     aws_region = var.aws_region
     awslogs_group = var.cluster_name
+    aws_region = var.aws_region
   }
 }
 
@@ -34,6 +35,7 @@ resource "aws_ecs_task_definition" "statping_app" {
       }
     }
   }
+  tags = local.tags
 }
 # ECS service
 resource "aws_ecs_service" "statping_app" {
@@ -55,9 +57,7 @@ resource "aws_ecs_service" "statping_app" {
     container_port = 80
   }
   depends_on = [aws_alb_listener.http]
-  tags = {
-    Name = "${var.statping_app_name}-statping-ecs"
-  }
+  tags = local.tags
 }
 
 # Traffic to the ECS cluster from the ALB
@@ -83,7 +83,5 @@ resource "aws_security_group" "aws-ecs-tasks" {
     to_port = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags = {
-    Name = "${var.statping_app_name}-ecs-tasks"
-  }
+  tags = local.tags
 }
