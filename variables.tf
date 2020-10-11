@@ -76,8 +76,32 @@ variable "statping_app_name" {
 
 variable "statping_app_image" {
   description = "Docker image to run in the ECS cluster"
-  default = "statping/statping:latest"
+  default = "statping/statping"
   type = string
+}
+
+variable "statping_app_image_tag" {
+  description = "Docker tag for statping"
+  default = "v0.90.69"
+  type = string
+}
+
+variable "statping_configuration" {
+  description = "configuration of statping with environment variable. Get full list at https://github.com/statping/statping/blob/dev/utils/env.go"
+  type = list(object({
+    name = string
+    value = string
+  }))
+  default = [
+    {
+      name = "DB_CONN"
+      value = "sqlite"
+    },
+    {
+      name = "USE_ASSESTS"
+      value = "true"
+    }
+  ]
 }
 
 variable "statping_domain" {

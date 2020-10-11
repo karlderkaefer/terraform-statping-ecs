@@ -1,14 +1,32 @@
 # container template
-data "template_file" "statping_app" {
-  template = file("${path.module}/templates/statping.json")
-  vars = {
+
+locals {
+  statping_template = templatefile("${path.module}/templates/statping.json", {
     app_name = var.statping_app_name
     app_image = var.statping_app_image
+    app_tag = var.statping_app_image_tag
+    app_configuration = jsonencode(var.statping_configuration)
     aws_region = var.aws_region
     awslogs_group = var.cluster_name
     aws_region = var.aws_region
-  }
+    cluster_name = local.cluster_full_name
+  })
 }
+
+//data "template_file" "statping_app" {
+//  template = file("${path.module}/templates/statping.json")
+//  vars = {
+//    app_name = var.statping_app_name
+//    app_image = var.statping_app_image
+//    app_tag = var.statping_app_image_tag
+//    app_configuration = var.statping_configuration
+//    aws_region = var.aws_region
+//    awslogs_group = var.cluster_name
+//    aws_region = var.aws_region
+//    cluster_name = local.cluster_full_name
+//
+//  }
+//}
 
 # ECS task definition
 resource "aws_ecs_task_definition" "statping_app" {
@@ -20,9 +38,10 @@ resource "aws_ecs_task_definition" "statping_app" {
 //  requires_compatibilities = ["FARGATE"]
   cpu = 998
   memory = 768
-  container_definitions = data.template_file.statping_app.rendered
+//  container_definitions = data.template_file.statping_app.rendered
+  container_definitions = local.statping_template
   volume {
-    name = "statping"
+    name = "${local.cluster_full_name}-${var.statping_app_name}"
 
     docker_volume_configuration {
       scope         = "shared"
@@ -44,6 +63,11 @@ resource "aws_ecs_service" "statping_app" {
   task_definition = aws_ecs_task_definition.statping_app.arn
   desired_count = 1
   launch_type = "EC2"
+
+  // we dont want to have rolling update stop the old statping container first
+  deployment_minimum_healthy_percent = 0
+  force_new_deployment = true
+
 //  launch_type = "FARGATE"
   network_configuration {
     security_groups = [aws_security_group.aws-ecs-tasks.id]

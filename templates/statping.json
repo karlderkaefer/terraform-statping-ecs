@@ -2,8 +2,8 @@
   {
     "name": "nginx",
     "image": "peterpanne/ecs-nginx:0.0.4",
-    "cpu": 128,
-    "memory": 256,
+    "cpu": 32,
+    "memory": 128,
     "networkMode": "awsvpc",
     "environment": [
       {
@@ -15,6 +15,10 @@
       {
         "containerPort": 80,
         "hostPort": 80
+      },
+      {
+        "containerPort": 443,
+        "hostPort": 443
       }
     ],
     "logConfiguration": {
@@ -22,14 +26,14 @@
       "options": {
         "awslogs-group": "${awslogs_group}",
         "awslogs-region": "${aws_region}",
-        "awslogs-stream-prefix": "nginx"
+        "awslogs-stream-prefix": "nginx-${app_name}"
       }
     }
   },
   {
     "name": "${app_name}",
-    "image": "${app_image}",
-    "cpu": 512,
+    "image": "${app_image}:${app_tag}",
+    "cpu": 128,
     "memory": 256,
     "networkMode": "awsvpc",
     "portMappings": [
@@ -38,24 +42,19 @@
         "hostPort": 8080
       }
     ],
-    "environment": [
-      {
-        "name": "DB_CONN",
-        "value": "sqlite"
-      }
-    ],
+    "environment": ${app_configuration},
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
         "awslogs-group": "${awslogs_group}",
         "awslogs-region": "${aws_region}",
-        "awslogs-stream-prefix": "statping"
+        "awslogs-stream-prefix": "${app_name}"
       }
     },
     "mountPoints" : [
       {
         "containerPath" : "/app",
-        "sourceVolume" : "statping"
+        "sourceVolume" : "${cluster_name}-${app_name}"
       }
     ]
   }
