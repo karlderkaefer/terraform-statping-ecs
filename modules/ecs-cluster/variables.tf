@@ -15,8 +15,8 @@ variable "image_id" {
 
 variable "instance_region" {
   description = "aws region of the instances needed for rexray"
-  type = string
-  default = "eu-central-1"
+  type        = string
+  default     = "eu-central-1"
 }
 
 variable "instance_type" {
@@ -27,20 +27,20 @@ variable "instance_type" {
 
 variable "instance_volume_size" {
   description = "size of root disk in GB"
-  type = number
-  default = 30
+  type        = number
+  default     = 30
 }
 
 variable "instance_key_name" {
   description = "ssh key to access ec2 instance"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "instance_enabled_rexray" {
   description = "enable rexray for manage docker volumes with ebs"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "vpc_id" {

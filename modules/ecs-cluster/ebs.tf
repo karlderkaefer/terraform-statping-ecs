@@ -28,13 +28,13 @@ data "aws_iam_policy_document" "ebs-rexray" {
 }
 
 resource "aws_iam_policy" "ebs-rexray" {
-  count = var.instance_enabled_rexray ? 1 : 0
+  count  = var.instance_enabled_rexray ? 1 : 0
   policy = data.aws_iam_policy_document.ebs-rexray[0].json
-  name = "${var.name}-rexray"
+  name   = "${var.name}-rexray"
 }
 
 resource "aws_iam_role_policy_attachment" "ebs-rexray" {
-  count = var.instance_enabled_rexray ? 1 : 0
+  count      = var.instance_enabled_rexray ? 1 : 0
   policy_arn = aws_iam_policy.ebs-rexray[0].arn
-  role = aws_iam_role.ecs_instance_role.name
+  role       = aws_iam_role.ecs_instance_role.name
 }

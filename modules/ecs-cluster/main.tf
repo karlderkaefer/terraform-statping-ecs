@@ -66,7 +66,7 @@ resource "aws_security_group_rule" "main" {
   from_port   = 0
   to_port     = 0
   protocol    = "-1"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:AWS007
 }
 
 resource "aws_launch_configuration" "main" {
@@ -74,7 +74,7 @@ resource "aws_launch_configuration" "main" {
 
   iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
 
-  key_name = var.instance_key_name
+  key_name                    = var.instance_key_name
   instance_type               = var.instance_type
   image_id                    = var.image_id
   associate_public_ip_address = false
@@ -83,11 +83,11 @@ resource "aws_launch_configuration" "main" {
   root_block_device {
     volume_type = "standard"
     volume_size = var.instance_volume_size
-    encrypted = true
+    encrypted   = true
   }
 
   user_data = templatefile("${path.module}/templates/user_data.sh", {
-    cluster_name = aws_ecs_cluster.main.name,
+    cluster_name    = aws_ecs_cluster.main.name,
     instance_region = var.instance_region,
   })
   lifecycle {
@@ -103,7 +103,7 @@ resource "aws_autoscaling_group" "main" {
   termination_policies = ["OldestLaunchConfiguration", "Default"]
 
   # binding to one AZ on purpose for EBS
-  vpc_zone_identifier  = [var.subnet_ids[0]]
+  vpc_zone_identifier = [var.subnet_ids[0]]
 
   desired_capacity = var.desired_capacity
   max_size         = var.max_size
