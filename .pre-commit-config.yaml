@@ -1,0 +1,10 @@
+repos:
+- repo: git://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.43.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+  hooks:
+    - id: terraform_fmt
+    - id: terraform_docs
+    - id: terraform_validate
+      args: ['--envs=AWS_DEFAULT_REGION="us-west-2"']
+    - id: terraform_tflint
+    - id: terraform_tfsec
