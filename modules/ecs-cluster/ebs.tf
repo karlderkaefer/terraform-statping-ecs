@@ -1,5 +1,5 @@
-data "aws_iam_policy_document" "ebs-rexray" {
-  count = var.instance_enabled_rexray ? 1 : 0
+data "aws_iam_policy_document" "rexray-ebs" {
+  count = var.instance_enabled_rexray && var.instance_enabled_ebs_rexray ? 1 : 0
   statement {
     actions = [
       "ec2:DescribeSnapshots",
@@ -27,14 +27,48 @@ data "aws_iam_policy_document" "ebs-rexray" {
   }
 }
 
-resource "aws_iam_policy" "ebs-rexray" {
-  count  = var.instance_enabled_rexray ? 1 : 0
-  policy = data.aws_iam_policy_document.ebs-rexray[0].json
-  name   = "${var.name}-rexray"
+data "aws_iam_policy_document" "rexray-efs" {
+  count = var.instance_enabled_rexray && var.instance_enabled_efs_rexray ? 1 : 0
+  statement {
+    actions = [
+      "elasticfilesystem:CreateFileSystem",
+      "elasticfilesystem:CreateMountTarget",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:CreateNetworkInterface",
+      "elasticfilesystem:CreateTags",
+      "elasticfilesystem:DeleteFileSystem",
+      "elasticfilesystem:DeleteMountTarget",
+      "ec2:DeleteNetworkInterface",
+      "elasticfilesystem:DescribeFileSystems",
+      "elasticfilesystem:DescribeMountTargets",
+    ]
+    resources = [
+      "*",
+    ]
+  }
 }
 
-resource "aws_iam_role_policy_attachment" "ebs-rexray" {
-  count      = var.instance_enabled_rexray ? 1 : 0
-  policy_arn = aws_iam_policy.ebs-rexray[0].arn
+resource "aws_iam_policy" "rexray-ebs" {
+  count  = var.instance_enabled_rexray && var.instance_enabled_ebs_rexray ? 1 : 0
+  policy = data.aws_iam_policy_document.rexray-ebs[0].json
+  name   = "${var.name}-rexray-ebs"
+}
+
+resource "aws_iam_policy" "rexray-efs" {
+  count  = var.instance_enabled_rexray && var.instance_enabled_efs_rexray ? 1 : 0
+  policy = data.aws_iam_policy_document.rexray-efs[0].json
+  name   = "${var.name}-rexray-efs"
+}
+
+resource "aws_iam_role_policy_attachment" "rexray-ebs" {
+  count      = var.instance_enabled_rexray && var.instance_enabled_ebs_rexray ? 1 : 0
+  policy_arn = aws_iam_policy.rexray-ebs[0].arn
+  role       = aws_iam_role.ecs_instance_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "rexray-efs" {
+  count      = var.instance_enabled_rexray && var.instance_enabled_efs_rexray ? 1 : 0
+  policy_arn = aws_iam_policy.rexray-efs[0].arn
   role       = aws_iam_role.ecs_instance_role.name
 }

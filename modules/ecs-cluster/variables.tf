@@ -43,6 +43,18 @@ variable "instance_enabled_rexray" {
   default     = true
 }
 
+variable "instance_enabled_ebs_rexray" {
+  description = "enable rexray for manage docker volumes with ebs"
+  type        = bool
+  default     = true
+}
+
+variable "instance_enabled_efs_rexray" {
+  description = "enable rexray for manage docker volumes with efs"
+  type        = bool
+  default     = false
+}
+
 variable "vpc_id" {
   description = "The id of the VPC to launch resources in."
 }
@@ -55,19 +67,19 @@ variable "subnet_ids" {
 variable "desired_capacity" {
   description = "Desired instance count."
   type        = string
-  default     = 2
+  default     = ""
 }
 
 variable "max_size" {
   description = "Maxmimum instance count."
   type        = string
-  default     = 2
+  default     = 5
 }
 
 variable "min_size" {
   description = "Minimum instance count."
   type        = string
-  default     = 2
+  default     = 1
 }
 
 variable "use_AmazonEC2ContainerServiceforEC2Role_policy" {
@@ -78,6 +90,12 @@ variable "use_AmazonEC2ContainerServiceforEC2Role_policy" {
 
 variable "security_group_ids" {
   description = "A list of security group ids to attach to the autoscaling group"
+  type        = list(string)
+  default     = []
+}
+
+variable "lb_elb_ids" {
+  description = "List of id of ELB which should be attached to autoscaling group"
   type        = list(string)
   default     = []
 }

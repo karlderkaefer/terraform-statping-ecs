@@ -33,7 +33,7 @@
   {
     "name": "${app_name}",
     "image": "${app_image}:${app_tag}",
-    "cpu": 128,
+    "cpu": 256,
     "memory": 256,
     "networkMode": "awsvpc",
     "portMappings": [
@@ -58,4 +58,5 @@
       }
     ]
   }
+
 ]

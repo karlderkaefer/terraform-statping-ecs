@@ -13,32 +13,21 @@ locals {
   })
 }
 
-//data "template_file" "statping_app" {
-//  template = file("${path.module}/templates/statping.json")
-//  vars = {
-//    app_name = var.statping_app_name
-//    app_image = var.statping_app_image
-//    app_tag = var.statping_app_image_tag
-//    app_configuration = var.statping_configuration
-//    aws_region = var.aws_region
-//    awslogs_group = var.cluster_name
-//    aws_region = var.aws_region
-//    cluster_name = local.cluster_full_name
-//
-//  }
+//resource "aws_efs_file_system" "efs" {
+//  encrypted = true
 //}
 
 # ECS task definition
 resource "aws_ecs_task_definition" "statping_app" {
+
   family                   = "statping-task"
   execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
 
   //  requires_compatibilities = ["FARGATE"]
-  cpu    = 998
-  memory = 768
-  //  container_definitions = data.template_file.statping_app.rendered
+  cpu                   = 512
+  memory                = 512
   container_definitions = local.statping_template
   volume {
     name = "${local.cluster_full_name}-${var.statping_app_name}"
@@ -47,10 +36,10 @@ resource "aws_ecs_task_definition" "statping_app" {
       scope         = "shared"
       autoprovision = true
       driver        = "rexray/ebs"
-
+      //      driver        = "rexray/efs"
       driver_opts = {
         volumetype = "gp2"
-        size       = 5
+        size       = 10
       }
     }
   }
@@ -63,17 +52,18 @@ resource "aws_ecs_service" "statping_app" {
   task_definition = aws_ecs_task_definition.statping_app.arn
   desired_count   = 1
   launch_type     = "EC2"
+  //  launch_type     = "FARGATE"
+  //  capacity_provider_strategy {
+  //    capacity_provider = ""
+  //  }
+  //  deployment_minimum_healthy_percent = 0
+  //  deployment_maximum_percent = 100
 
-  // we dont want to have rolling update stop the old statping container first
-  deployment_minimum_healthy_percent = 0
-  force_new_deployment               = true
-
-  //  launch_type = "FARGATE"
   network_configuration {
     security_groups  = [aws_security_group.aws-ecs-tasks.id]
-    subnets          = module.vpc.private_subnets
+    subnets          = [module.vpc.public_subnets[0]]
     assign_public_ip = false
-    //    assign_public_ip = true
+    //        assign_public_ip = true
   }
   load_balancer {
     target_group_arn = aws_alb_target_group.statping_app.id

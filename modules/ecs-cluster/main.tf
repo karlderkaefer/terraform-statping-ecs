@@ -8,10 +8,6 @@ data "aws_availability_zones" "default" {
 
 resource "aws_ecs_cluster" "main" {
   name = local.cluster_name
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 data "aws_iam_policy_document" "ecs_instance_assume_role_policy" {
@@ -19,8 +15,11 @@ data "aws_iam_policy_document" "ecs_instance_assume_role_policy" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
+      type = "Service"
+      identifiers = [
+        "ecs.amazonaws.com",
+        "ec2.amazonaws.com"
+      ]
     }
   }
 }
@@ -43,19 +42,52 @@ resource "aws_iam_instance_profile" "ecs_instance_profile" {
   role = aws_iam_role.ecs_instance_role.name
 }
 
-#
-# Security Group
-#
+module "ecs_asg" {
+  source  = "terraform-aws-modules/autoscaling/aws"
+  version = "~> 3.0"
+
+  name    = var.name
+  lc_name = "lc-${var.name}"
+
+  image_id                     = var.image_id
+  instance_type                = var.instance_type
+  associate_public_ip_address  = false
+  security_groups              = concat(var.security_group_ids, [aws_security_group.main.id])
+  load_balancers               = var.lb_elb_ids
+  key_name                     = var.instance_key_name
+  recreate_asg_when_lc_changes = true
+
+  root_block_device = [
+    {
+      volume_size = var.instance_volume_size
+      volume_type = "gp2"
+      encrypted   = true
+    },
+  ]
+
+  asg_name = "asg-${var.name}"
+  // on purpose we want to run in same availability zone
+  vpc_zone_identifier       = [var.subnet_ids[0]]
+  health_check_type         = "EC2"
+  min_size                  = var.min_size
+  max_size                  = var.max_size
+  desired_capacity          = var.desired_capacity
+  wait_for_capacity_timeout = 0
+
+
+  iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
+  user_data = templatefile("${path.module}/templates/user_data.sh", {
+    cluster_name                = local.cluster_name,
+    instance_region             = var.instance_region,
+    instance_enabled_ebs_rexray = var.instance_enabled_ebs_rexray,
+    instance_enabled_efs_rexray = var.instance_enabled_efs_rexray,
+  })
+}
 
 resource "aws_security_group" "main" {
   name        = "asg-${local.cluster_name}"
   description = "${local.cluster_name} ASG security group"
   vpc_id      = var.vpc_id
-
-  tags = {
-    Environment = var.environment
-    Automation  = "Terraform"
-  }
 }
 
 resource "aws_security_group_rule" "main" {
@@ -67,73 +99,4 @@ resource "aws_security_group_rule" "main" {
   to_port     = 0
   protocol    = "-1"
   cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:AWS007
-}
-
-resource "aws_launch_configuration" "main" {
-  name_prefix = format("ecs-%s-", local.cluster_name)
-
-  iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
-
-  key_name                    = var.instance_key_name
-  instance_type               = var.instance_type
-  image_id                    = var.image_id
-  associate_public_ip_address = false
-  security_groups             = concat(var.security_group_ids, [aws_security_group.main.id])
-
-  root_block_device {
-    volume_type = "standard"
-    volume_size = var.instance_volume_size
-    encrypted   = true
-  }
-
-  user_data = templatefile("${path.module}/templates/user_data.sh", {
-    cluster_name    = aws_ecs_cluster.main.name,
-    instance_region = var.instance_region,
-  })
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_autoscaling_group" "main" {
-  # force recreation when configuration was changed
-  name = "ecs-${aws_launch_configuration.main.name}-asg"
-
-  launch_configuration = aws_launch_configuration.main.id
-  termination_policies = ["OldestLaunchConfiguration", "Default"]
-
-  # binding to one AZ on purpose for EBS
-  vpc_zone_identifier = [var.subnet_ids[0]]
-
-  desired_capacity = var.desired_capacity
-  max_size         = var.max_size
-  min_size         = var.min_size
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  tag {
-    key                 = "Name"
-    value               = "ecs-${local.cluster_name}"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "Cluster"
-    value               = local.cluster_name
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "Environment"
-    value               = var.environment
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "Automation"
-    value               = "Terraform"
-    propagate_at_launch = true
-  }
 }

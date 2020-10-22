@@ -8,7 +8,13 @@ echo 'ECS_DISABLE_PRIVILEGED=true' >> /etc/ecs/ecs.config
 set -x
 
 #install the Docker volume plugin
-docker plugin install rexray/ebs REXRAY_PREEMPT=true EBS_REGION=${instance_region} --grant-all-permissions
+if [ "${instance_enabled_ebs_rexray}" == "true" ]; then
+  docker plugin install rexray/ebs REXRAY_PREEMPT=true EBS_REGION=${instance_region} --grant-all-permissions
+fi
+if [ "${instance_enabled_efs_rexray}" == "true" ]; then
+  docker plugin install rexray/efs REXRAY_PREEMPT=true EFS_REGION=${instance_region} --grant-all-permissions
+  yum install amazon-efs-utils
+  systemctl enable --now amazon-ecs-volume-plugin
+fi
 #restart the ECS agent
-stop ecs
-start ecs
+#systemctl restart ecs
