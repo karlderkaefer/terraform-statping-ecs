@@ -10,6 +10,7 @@ variable "environment" {
 
 variable "image_id" {
   description = "Amazon ECS-Optimized AMI."
+  default     = ""
   type        = string
 }
 
@@ -43,6 +44,12 @@ variable "instance_enabled_rexray" {
   default     = true
 }
 
+variable "cluster_ssh_cidr" {
+  description = "allow ssh access only from these IP's. Highly recommended to change as this is open to world by default"
+  default     = ["0.0.0.0/0"]
+  type        = list(string)
+}
+
 variable "instance_enabled_ebs_rexray" {
   description = "enable rexray for manage docker volumes with ebs"
   type        = bool
@@ -65,20 +72,20 @@ variable "subnet_ids" {
 }
 
 variable "desired_capacity" {
-  description = "Desired instance count."
-  type        = string
-  default     = ""
+  description = "Desired instance count. 0 for ignoring"
+  type        = number
+  default     = 0
 }
 
 variable "max_size" {
   description = "Maxmimum instance count."
-  type        = string
+  type        = number
   default     = 5
 }
 
 variable "min_size" {
   description = "Minimum instance count."
-  type        = string
+  type        = number
   default     = 1
 }
 

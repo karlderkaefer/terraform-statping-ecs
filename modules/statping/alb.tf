@@ -1,6 +1,10 @@
+data "aws_vpc" "default" {
+  id = var.cluster_vpc_id
+}
+
 resource "aws_alb" "main" { #tfsec:ignore:AWS005
   name            = "${var.statping_app_name}-load-balancer"
-  subnets         = module.vpc.public_subnets
+  subnets         = var.cluster_public_subnets
   security_groups = [aws_security_group.aws-lb.id]
   tags = {
     Name = "${var.cluster_name}-alb"
@@ -11,7 +15,7 @@ resource "aws_alb" "main" { #tfsec:ignore:AWS005
 resource "aws_security_group" "aws-lb" {
   name        = "${var.statping_app_name}-load-balancer"
   description = "Controls access to the ALB"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.cluster_vpc_id
   ingress {
     protocol    = "tcp"
     from_port   = 80
@@ -37,7 +41,7 @@ resource "aws_alb_target_group" "statping_app" {
   name        = "${var.statping_app_name}-target-group"
   port        = 80
   protocol    = "HTTP"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.cluster_vpc_id
   target_type = "ip"
   health_check {
     healthy_threshold   = "3"

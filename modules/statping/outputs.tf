@@ -7,3 +7,8 @@ output "statping_template" {
   value = local.statping_template
 }
 
+output "statping_configuration" {
+  description = "environment variables for statping"
+  value       = var.statping_configuration
+}
+

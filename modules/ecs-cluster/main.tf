@@ -1,5 +1,6 @@
 locals {
   cluster_name = "${var.name}-${var.environment}"
+  image_id     = var.image_id == "" ? data.aws_ami.default.image_id : var.image_id
 }
 
 data "aws_availability_zones" "default" {
@@ -49,7 +50,7 @@ module "ecs_asg" {
   name    = var.name
   lc_name = "lc-${var.name}"
 
-  image_id                     = var.image_id
+  image_id                     = local.image_id
   instance_type                = var.instance_type
   associate_public_ip_address  = false
   security_groups              = concat(var.security_group_ids, [aws_security_group.main.id])
@@ -71,7 +72,7 @@ module "ecs_asg" {
   health_check_type         = "EC2"
   min_size                  = var.min_size
   max_size                  = var.max_size
-  desired_capacity          = var.desired_capacity
+  desired_capacity          = var.desired_capacity == 0 ? var.min_size : var.desired_capacity
   wait_for_capacity_timeout = 0
 
 
@@ -99,4 +100,15 @@ resource "aws_security_group_rule" "main" {
   to_port     = 0
   protocol    = "-1"
   cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:AWS007
+}
+
+resource "aws_security_group_rule" "ssh_access" {
+  count             = var.instance_key_name != "" ? 1 : 0
+  description       = "admin SSH access to ecs cluster ${local.cluster_name}"
+  from_port         = 22
+  protocol          = "tcp"
+  security_group_id = aws_security_group.main.id
+  to_port           = 22
+  type              = "ingress"
+  cidr_blocks       = var.cluster_ssh_cidr #tfsec:ignore:AWS006
 }

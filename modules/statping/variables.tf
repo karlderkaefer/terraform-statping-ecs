@@ -3,6 +3,11 @@ variable "aws_region" {
   type    = string
 }
 
+variable "cluster_vpc_id" {
+  description = "vpc id for ecs service and ecs cluster"
+  type        = string
+}
+
 variable "cluster_ssh_key" {
   description = "allow ssh access to cluster with this key"
   default     = ""
@@ -15,8 +20,7 @@ variable "cluster_environment" {
 }
 
 variable "cluster_name" {
-  description = "Name of ecs cluster. Full cluster name consists of $${cluster_name}-$${cluster_environment} "
-  default     = "statping"
+  description = "Full name of ecs cluster."
   type        = string
 }
 
@@ -31,6 +35,7 @@ variable "cluster_lb_cidr" {
   default     = ["0.0.0.0/0"]
   type        = list(string)
 }
+
 
 variable "cluster_instance_type" {
   description = "ec2 type of nodes"
@@ -66,6 +71,16 @@ variable "cluster_hosted_zone_name" {
   description = "name of hosted zone"
   default     = ""
   type        = string
+}
+
+variable "cluster_private_subnets" {
+  description = "subnets for running instances."
+  type        = list(string)
+}
+
+variable "cluster_public_subnets" {
+  description = "subnets for load balancer."
+  type        = list(string)
 }
 
 variable "statping_app_name" {
