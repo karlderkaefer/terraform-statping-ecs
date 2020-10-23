@@ -3,7 +3,7 @@ data "aws_vpc" "default" {
 }
 
 resource "aws_alb" "main" { #tfsec:ignore:AWS005
-  name            = "${var.statping_app_name}-load-balancer"
+  name            = substr("${local.cluster_full_name}-lb", 0, 32)
   subnets         = var.cluster_public_subnets
   security_groups = [aws_security_group.aws-lb.id]
   tags = {
@@ -13,7 +13,7 @@ resource "aws_alb" "main" { #tfsec:ignore:AWS005
 
 # ALB Security Group: Edit to restrict access to the application
 resource "aws_security_group" "aws-lb" {
-  name        = "${var.statping_app_name}-load-balancer"
+  name        = substr("${local.cluster_full_name}-lb", 0, 32)
   description = "Controls access to the ALB"
   vpc_id      = var.cluster_vpc_id
   ingress {
@@ -38,7 +38,7 @@ resource "aws_security_group" "aws-lb" {
 }
 
 resource "aws_alb_target_group" "statping_app" {
-  name        = "${var.statping_app_name}-target-group"
+  name        = substr("${local.cluster_full_name}-target-group", 0, 32)
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.cluster_vpc_id
