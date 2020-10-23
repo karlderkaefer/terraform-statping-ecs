@@ -29,3 +29,5 @@ you can access ec2 instance as user `ec2-user` if you enabled it by running
 # get public from aws console
 ssh ec2-user@123.123.123.123
 ```
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

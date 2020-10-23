@@ -27,3 +27,5 @@ then provision statping with terraform. After 6min you statping_domain should be
 terraform init
 terraform apply
 ```
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
