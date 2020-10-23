@@ -1,3 +1,47 @@
 ## Statping Module
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
+
+No requirements.
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | n/a |
+| null | n/a |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| aws\_region | n/a | `string` | `"eu-central-1"` | no |
+| cluster\_desired\_capacity | desired number of nodes of cluster | `number` | `1` | no |
+| cluster\_enable\_https | enabled and force https for ALB | `bool` | `true` | no |
+| cluster\_environment | n/a | `string` | `"test"` | no |
+| cluster\_hosted\_zone\_name | name of hosted zone | `string` | `""` | no |
+| cluster\_instance\_type | ec2 type of nodes | `string` | `"t2.small"` | no |
+| cluster\_lb\_cidr | allow access to load balancer from these IP's. By default open to world. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| cluster\_max\_size | maximum number of nodes of cluster | `number` | `3` | no |
+| cluster\_min\_size | minimum number of nodes of cluster | `number` | `1` | no |
+| cluster\_name | Full name of ecs cluster. | `string` | n/a | yes |
+| cluster\_private\_subnets | subnets for running instances. | `list(string)` | n/a | yes |
+| cluster\_public\_subnets | subnets for load balancer. | `list(string)` | n/a | yes |
+| cluster\_ssh\_cidr | allow ssh access only from these IP's. Highly recommended to change as this is open to world by default | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| cluster\_ssh\_key | allow ssh access to cluster with this key | `string` | `""` | no |
+| cluster\_vpc\_id | vpc id for ecs service and ecs cluster | `string` | n/a | yes |
+| statping\_app\_image | Docker image to run in the ECS cluster | `string` | `"statping/statping"` | no |
+| statping\_app\_image\_tag | Docker tag for statping | `string` | `"v0.90.69"` | no |
+| statping\_app\_name | Name of Application Container | `string` | `"statping"` | no |
+| statping\_configuration | configuration of statping with environment variable. Get full list at https://github.com/statping/statping/blob/dev/utils/env.go | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "DB_CONN",<br>    "value": "sqlite"<br>  },<br>  {<br>    "name": "USE_ASSESTS",<br>    "value": "true"<br>  }<br>]</pre> | no |
+| statping\_domain | name of the domain where statping should be reachable | `string` | `""` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| statping\_configuration | environment variables for statping |
+| statping\_dns\_lb | DNS load balancer |
+| statping\_template | n/a |
+
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

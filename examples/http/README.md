@@ -30,4 +30,33 @@ you can access ec2 instance as user `ec2-user` if you enabled it by running
 ssh ec2-user@123.123.123.123
 ```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | ~> 0.13.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | n/a |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| aws\_region | n/a | `string` | `"eu-central-1"` | no |
+| cluster\_name | Name of ecs cluster. Full cluster name consists of ${cluster\_name}-${cluster\_environment} | `string` | `"statping"` | no |
+| cluster\_ssh\_cidr | allow ssh access only from these IP's. Highly recommended to change as this is open to world by default | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| cluster\_ssh\_key | allow ssh access to cluster with this key | `string` | `""` | no |
+| environment | n/a | `string` | `"test"` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| app\_url | n/a |
+| statping\_template | n/a |
+
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
