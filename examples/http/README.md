@@ -29,6 +29,19 @@ you can access ec2 instance as user `ec2-user` if you enabled it by running
 # get public from aws console
 ssh ec2-user@123.123.123.123
 ```
+
+## using the module
+
+to use the module directly from git:
+```
+module "ecs_cluster" {
+  source = "git::git@github.com:karlderkaefer/terraform-statping-ecs.git//modules/ecs-cluster?ref=v1.0.0"
+  ..
+}
+```
+
+
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
