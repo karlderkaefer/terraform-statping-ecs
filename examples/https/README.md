@@ -59,7 +59,6 @@ terraform apply
 | Name | Description |
 |------|-------------|
 | app\_url | n/a |
-| script | n/a |
 | statping\_template | n/a |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
