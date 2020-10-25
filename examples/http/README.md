@@ -54,6 +54,7 @@ module "ecs_cluster" {
 | Name | Version |
 |------|---------|
 | aws | n/a |
+| random | n/a |
 
 ## Inputs
 

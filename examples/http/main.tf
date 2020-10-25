@@ -6,10 +6,55 @@ locals {
     App         = var.cluster_name
     ManagedBy   = "terraform"
   }
+  statping_configuration = [
+    {
+      name  = "DB_CONN"
+      value = "sqlite"
+    },
+    {
+      name  = "ADMIN_PASSWORD"
+      value = random_password.admin_password.result
+    },
+    {
+      name  = "API_SECRET"
+      value = random_password.api_key.result
+    },
+    {
+      name  = "SAMPLE_DATA"
+      value = "false"
+    }
+  ]
+  statping_services = {
+    statping = {
+      json_data = {
+        name            = "New Service",
+        domain          = "https://statping.com",
+        expected        = "",
+        expected_status = 200,
+        check_interval  = 30,
+        type            = "http",
+        method          = "GET",
+        post_data       = "",
+        port            = 0,
+        timeout         = 30,
+        order_id        = 0,
+      }
+    }
+  }
 }
 
 provider "aws" {
   region = var.aws_region
+}
+
+resource "random_password" "admin_password" {
+  length  = 12
+  special = false
+}
+
+resource "random_password" "api_key" {
+  length  = 12
+  special = false
 }
 
 data "aws_availability_zones" "default" {
@@ -54,4 +99,8 @@ module "ecs_statping" {
 
   cluster_private_subnets = module.vpc.private_subnets
   cluster_public_subnets  = module.vpc.public_subnets
+
+  statping_configuration = local.statping_configuration
+  statping_services      = local.statping_services
+  statping_api_key       = random_password.api_key.result
 }

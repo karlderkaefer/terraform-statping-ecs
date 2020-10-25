@@ -86,4 +86,9 @@ resource "aws_security_group" "aws-ecs-tasks" {
     cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:AWS009
   }
   tags = local.tags
+  depends_on = [
+    aws_alb_listener.http,
+    aws_alb_listener.https,
+    aws_lb_listener.http_redirect
+  ]
 }
