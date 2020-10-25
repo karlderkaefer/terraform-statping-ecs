@@ -15,4 +15,5 @@ locals {
     aws_region        = var.aws_region
     cluster_name      = local.cluster_full_name
   })
+  statping_lb = var.cluster_enable_https ? format("%s://%s", "https", var.statping_domain) : format("%s://%s", "http", aws_alb.main.dns_name)
 }

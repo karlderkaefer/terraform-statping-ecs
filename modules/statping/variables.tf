@@ -20,7 +20,7 @@ variable "cluster_environment" {
 }
 
 variable "cluster_name" {
-  description = "Full name of ecs cluster."
+  description = "name of ecs cluster."
   type        = string
 }
 
@@ -97,7 +97,7 @@ variable "statping_app_image" {
 
 variable "statping_app_image_tag" {
   description = "Docker tag for statping"
-  default     = "v0.90.69"
+  default     = "v0.90.71"
   type        = string
 }
 
@@ -123,4 +123,29 @@ variable "statping_domain" {
   description = "name of the domain where statping should be reachable"
   default     = ""
   type        = string
+}
+
+variable "statping_api_key" {
+  description = "api key to be able to provision statping"
+  default     = ""
+  type        = string
+}
+
+variable "statping_services" {
+  description = "service list to provision"
+  type = map(object({
+    json_data = object({
+      name            = string
+      domain          = string
+      expected        = string
+      expected_status = number
+      check_interval  = number
+      type            = string
+      method          = string
+      post_data       = string
+      port            = number
+      timeout         = number
+      order_id        = number
+    })
+  }))
 }

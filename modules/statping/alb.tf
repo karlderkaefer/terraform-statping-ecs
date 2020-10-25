@@ -115,6 +115,9 @@ module "acm" {
   zone_id     = data.aws_route53_zone.default[0].zone_id
 
   tags = local.tags
+  depends_on = [
+    aws_route53_record.default
+  ]
 }
 
 resource "aws_route53_record" "default" {

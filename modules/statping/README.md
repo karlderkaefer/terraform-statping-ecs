@@ -10,6 +10,7 @@ No requirements.
 |------|---------|
 | aws | n/a |
 | null | n/a |
+| template | n/a |
 
 ## Inputs
 
@@ -24,22 +25,26 @@ No requirements.
 | cluster\_lb\_cidr | allow access to load balancer from these IP's. By default open to world. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | cluster\_max\_size | maximum number of nodes of cluster | `number` | `3` | no |
 | cluster\_min\_size | minimum number of nodes of cluster | `number` | `1` | no |
-| cluster\_name | Full name of ecs cluster. | `string` | n/a | yes |
+| cluster\_name | name of ecs cluster. | `string` | n/a | yes |
 | cluster\_private\_subnets | subnets for running instances. | `list(string)` | n/a | yes |
 | cluster\_public\_subnets | subnets for load balancer. | `list(string)` | n/a | yes |
 | cluster\_ssh\_cidr | allow ssh access only from these IP's. Highly recommended to change as this is open to world by default | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | cluster\_ssh\_key | allow ssh access to cluster with this key | `string` | `""` | no |
 | cluster\_vpc\_id | vpc id for ecs service and ecs cluster | `string` | n/a | yes |
+| statping\_api\_key | api key to be able to provision statping | `string` | `""` | no |
 | statping\_app\_image | Docker image to run in the ECS cluster | `string` | `"statping/statping"` | no |
-| statping\_app\_image\_tag | Docker tag for statping | `string` | `"v0.90.69"` | no |
+| statping\_app\_image\_tag | Docker tag for statping | `string` | `"v0.90.71"` | no |
 | statping\_app\_name | Name of Application Container | `string` | `"statping"` | no |
 | statping\_configuration | configuration of statping with environment variable. Get full list at https://github.com/statping/statping/blob/dev/utils/env.go | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "DB_CONN",<br>    "value": "sqlite"<br>  },<br>  {<br>    "name": "USE_ASSESTS",<br>    "value": "true"<br>  }<br>]</pre> | no |
 | statping\_domain | name of the domain where statping should be reachable | `string` | `""` | no |
+| statping\_services | service list to provision | <pre>map(object({<br>    json_data = object({<br>      name            = string<br>      domain          = string<br>      expected        = string<br>      expected_status = number<br>      check_interval  = number<br>      type            = string<br>      method          = string<br>      post_data       = string<br>      port            = number<br>      timeout         = number<br>      order_id        = number<br>    })<br>  }))</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| script | n/a |
+| services | n/a |
 | statping\_configuration | environment variables for statping |
 | statping\_dns\_lb | DNS load balancer |
 | statping\_template | n/a |

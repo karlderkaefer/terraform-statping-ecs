@@ -5,3 +5,10 @@ output "app_url" {
 output "statping_template" {
   value = module.ecs_statping.statping_configuration
 }
+
+output "script" {
+  value = module.ecs_statping.script
+}
+output "services" {
+  value = module.ecs_statping.services
+}

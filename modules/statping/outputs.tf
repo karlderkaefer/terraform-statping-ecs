@@ -1,6 +1,6 @@
 output "statping_dns_lb" {
   description = "DNS load balancer"
-  value       = var.cluster_enable_https ? var.statping_domain : aws_alb.main.dns_name
+  value       = local.statping_lb
 }
 
 output "statping_template" {
@@ -10,5 +10,13 @@ output "statping_template" {
 output "statping_configuration" {
   description = "environment variables for statping"
   value       = var.statping_configuration
+}
+
+output "script" {
+  value = data.template_file.service["statping"].rendered
+}
+
+output "services" {
+  value = var.statping_services
 }
 

@@ -6,10 +6,59 @@ locals {
     App         = var.cluster_name
     ManagedBy   = "terraform"
   }
+  statping_configuration = [
+    {
+      name  = "DB_CONN"
+      value = "sqlite"
+    },
+    {
+      name  = "DOMAIN"
+      value = "https://${var.statping_domain}"
+    },
+    {
+      name  = "ADMIN_PASSWORD"
+      value = random_password.admin_password.result
+    },
+    {
+      name  = "API_SECRET"
+      value = random_password.api_key.result
+    },
+    {
+      name  = "SAMPLE_DATA"
+      value = "false"
+    }
+  ]
+  statping_services = {
+    statping = {
+      json_data = {
+        name            = "New Service",
+        domain          = "https://statping.com",
+        expected        = "",
+        expected_status = 200,
+        check_interval  = 30,
+        type            = "http",
+        method          = "GET",
+        post_data       = "",
+        port            = 0,
+        timeout         = 30,
+        order_id        = 0,
+      }
+    }
+  }
 }
 
 provider "aws" {
   region = var.aws_region
+}
+
+resource "random_password" "admin_password" {
+  length  = 12
+  special = false
+}
+
+resource "random_password" "api_key" {
+  length  = 12
+  special = false
 }
 
 data "aws_availability_zones" "default" {
@@ -52,10 +101,14 @@ module "ecs_statping" {
   cluster_vpc_id           = module.vpc.vpc_id
   cluster_enable_https     = true
   cluster_lb_cidr          = var.cluster_lb_cidr
+  cluster_ssh_cidr         = var.cluster_ssh_cidr
   cluster_hosted_zone_name = var.cluster_hosted_zone_name
+  statping_configuration   = local.statping_configuration
 
   cluster_private_subnets = module.vpc.private_subnets
   cluster_public_subnets  = module.vpc.public_subnets
 
-  statping_domain = var.statping_domain
+  statping_domain   = var.statping_domain
+  statping_api_key  = random_password.api_key.result
+  statping_services = local.statping_services
 }
