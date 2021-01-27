@@ -12,10 +12,6 @@ output "statping_configuration" {
   value       = var.statping_configuration
 }
 
-output "script" {
-  value = data.template_file.service["statping"].rendered
-}
-
 output "services" {
   value = var.statping_services
 }

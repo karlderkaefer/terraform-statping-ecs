@@ -44,7 +44,6 @@ No requirements.
 
 | Name | Description |
 |------|-------------|
-| script | n/a |
 | services | n/a |
 | statping\_configuration | environment variables for statping |
 | statping\_dns\_lb | DNS load balancer |
