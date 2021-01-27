@@ -2,8 +2,8 @@
   {
     "name": "nginx",
     "image": "peterpanne/ecs-nginx:0.0.4",
-    "cpu": 32,
-    "memory": 128,
+    "cpu": "${nginx_cpu}",
+    "memory": "${nginx_memory}",
     "networkMode": "awsvpc",
     "environment": [
       {
@@ -33,8 +33,8 @@
   {
     "name": "${app_name}",
     "image": "${app_image}:${app_tag}",
-    "cpu": 256,
-    "memory": 256,
+    "cpu": "${statping_cpu}",
+    "memory": "${statping_memory}",
     "networkMode": "awsvpc",
     "portMappings": [
       {

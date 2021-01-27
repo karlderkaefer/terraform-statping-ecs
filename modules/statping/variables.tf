@@ -149,3 +149,29 @@ variable "statping_services" {
     })
   }))
 }
+
+variable "nginx_cpu" {
+  description = "cpu for nginx container in ms"
+  type        = number
+  default     = 32
+}
+
+variable "nginx_memory" {
+  description = "memory for nginx container in MB"
+  type        = number
+  default     = 128
+}
+
+variable "statping_cpu" {
+  description = "cpu for statping container in ms"
+  type        = number
+  default     = 256
+}
+
+variable "statping_memory" {
+  description = "memory for statping container in MB"
+  type        = number
+  default     = 256
+}
+
+
