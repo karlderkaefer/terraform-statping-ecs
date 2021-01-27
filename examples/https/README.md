@@ -51,8 +51,14 @@ terraform apply
 | cluster\_name | Name of ecs cluster. Full cluster name consists of ${cluster\_name}-${cluster\_environment} | `string` | `"statping"` | no |
 | cluster\_ssh\_cidr | allow ssh access only from these IP's. Highly recommended to change as this is open to world by default | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | cluster\_ssh\_key | allow ssh access to cluster with this key | `string` | `""` | no |
+| desired\_capacity | Desired instance count. 0 for ignoring | `number` | `0` | no |
 | environment | n/a | `string` | `"test"` | no |
+| instance\_type | The instance type to use. | `string` | `"t2.micro"` | no |
+| nginx\_cpu | cpu for nginx container in ms | `number` | `32` | no |
+| nginx\_memory | memory for nginx container in MB | `number` | `128` | no |
+| statping\_cpu | cpu for statping container in ms | `number` | `256` | no |
 | statping\_domain | n/a | `string` | `""` | no |
+| statping\_memory | memory for statping container in MB | `number` | `256` | no |
 
 ## Outputs
 

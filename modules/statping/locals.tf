@@ -14,6 +14,11 @@ locals {
     awslogs_group     = aws_cloudwatch_log_group.statping.name
     aws_region        = var.aws_region
     cluster_name      = local.cluster_full_name
+    nginx_cpu         = var.nginx_cpu
+    nginx_memory      = var.nginx_memory
+    statping_cpu      = var.statping_cpu
+    statping_memory   = var.statping_memory
+
   })
   statping_lb = var.cluster_enable_https ? format("%s://%s", "https", var.statping_domain) : format("%s://%s", "http", aws_alb.main.dns_name)
 }

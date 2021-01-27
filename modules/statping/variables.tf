@@ -43,24 +43,6 @@ variable "cluster_instance_type" {
   type        = string
 }
 
-variable "cluster_desired_capacity" {
-  description = "desired number of nodes of cluster"
-  default     = 1
-  type        = number
-}
-
-variable "cluster_min_size" {
-  description = "minimum number of nodes of cluster"
-  default     = 1
-  type        = number
-}
-
-variable "cluster_max_size" {
-  description = "maximum number of nodes of cluster"
-  default     = 3
-  type        = number
-}
-
 variable "cluster_enable_https" {
   description = "enabled and force https for ALB"
   default     = true
@@ -148,4 +130,31 @@ variable "statping_services" {
       order_id        = number
     })
   }))
+  default = {}
 }
+
+variable "nginx_cpu" {
+  description = "cpu for nginx container in ms"
+  type        = number
+  default     = 32
+}
+
+variable "nginx_memory" {
+  description = "memory for nginx container in MB"
+  type        = number
+  default     = 128
+}
+
+variable "statping_cpu" {
+  description = "cpu for statping container in ms"
+  type        = number
+  default     = 256
+}
+
+variable "statping_memory" {
+  description = "memory for statping container in MB"
+  type        = number
+  default     = 256
+}
+
+
