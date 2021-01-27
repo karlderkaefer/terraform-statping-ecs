@@ -13,8 +13,8 @@ resource "aws_ecs_task_definition" "statping_app" {
   requires_compatibilities = ["EC2"]
 
   //  requires_compatibilities = ["FARGATE"]
-  cpu                   = 512
-  memory                = 512
+  cpu                   = var.statping_cpu + var.nginx_cpu
+  memory                = var.statping_memory + var.nginx_memory
   container_definitions = local.statping_template
   volume {
     name = "${local.cluster_full_name}-${var.statping_app_name}"

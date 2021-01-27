@@ -43,24 +43,6 @@ variable "cluster_instance_type" {
   type        = string
 }
 
-variable "cluster_desired_capacity" {
-  description = "desired number of nodes of cluster"
-  default     = 1
-  type        = number
-}
-
-variable "cluster_min_size" {
-  description = "minimum number of nodes of cluster"
-  default     = 1
-  type        = number
-}
-
-variable "cluster_max_size" {
-  description = "maximum number of nodes of cluster"
-  default     = 3
-  type        = number
-}
-
 variable "cluster_enable_https" {
   description = "enabled and force https for ALB"
   default     = true
@@ -148,6 +130,7 @@ variable "statping_services" {
       order_id        = number
     })
   }))
+  default = {}
 }
 
 variable "nginx_cpu" {

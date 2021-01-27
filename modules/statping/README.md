@@ -17,14 +17,11 @@ No requirements.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | aws\_region | n/a | `string` | `"eu-central-1"` | no |
-| cluster\_desired\_capacity | desired number of nodes of cluster | `number` | `1` | no |
 | cluster\_enable\_https | enabled and force https for ALB | `bool` | `true` | no |
 | cluster\_environment | n/a | `string` | `"test"` | no |
 | cluster\_hosted\_zone\_name | name of hosted zone | `string` | `""` | no |
 | cluster\_instance\_type | ec2 type of nodes | `string` | `"t2.small"` | no |
 | cluster\_lb\_cidr | allow access to load balancer from these IP's. By default open to world. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
-| cluster\_max\_size | maximum number of nodes of cluster | `number` | `3` | no |
-| cluster\_min\_size | minimum number of nodes of cluster | `number` | `1` | no |
 | cluster\_name | name of ecs cluster. | `string` | n/a | yes |
 | cluster\_private\_subnets | subnets for running instances. | `list(string)` | n/a | yes |
 | cluster\_public\_subnets | subnets for load balancer. | `list(string)` | n/a | yes |
@@ -41,7 +38,7 @@ No requirements.
 | statping\_cpu | cpu for statping container in ms | `number` | `256` | no |
 | statping\_domain | name of the domain where statping should be reachable | `string` | `""` | no |
 | statping\_memory | memory for statping container in MB | `number` | `256` | no |
-| statping\_services | service list to provision | <pre>map(object({<br>    json_data = object({<br>      name            = string<br>      domain          = string<br>      expected        = string<br>      expected_status = number<br>      check_interval  = number<br>      type            = string<br>      method          = string<br>      post_data       = string<br>      port            = number<br>      timeout         = number<br>      order_id        = number<br>    })<br>  }))</pre> | n/a | yes |
+| statping\_services | service list to provision | <pre>map(object({<br>    json_data = object({<br>      name            = string<br>      domain          = string<br>      expected        = string<br>      expected_status = number<br>      check_interval  = number<br>      type            = string<br>      method          = string<br>      post_data       = string<br>      port            = number<br>      timeout         = number<br>      order_id        = number<br>    })<br>  }))</pre> | `{}` | no |
 
 ## Outputs
 

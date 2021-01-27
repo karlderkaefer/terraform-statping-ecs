@@ -2,9 +2,8 @@ data "template_file" "service" {
   for_each = var.statping_services
   template = file("${path.module}/templates/provision.sh")
   vars = {
-    cluster_url = local.statping_lb,
-    api_key     = var.statping_api_key
-    //    api_key = "8kpYhn566TvZHs6GOD6Jq1VC3xBenuPY"
+    cluster_url  = local.statping_lb,
+    api_key      = var.statping_api_key
     service_json = jsonencode(each.value.json_data)
     service_name = each.value.json_data.name
   }

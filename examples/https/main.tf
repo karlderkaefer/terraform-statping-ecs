@@ -91,6 +91,9 @@ module "ecs_cluster" {
 
   subnet_ids = module.vpc.public_subnets
   vpc_id     = module.vpc.vpc_id
+
+  desired_capacity = var.desired_capacity
+  instance_type    = var.instance_type
 }
 
 module "ecs_statping" {
@@ -108,7 +111,15 @@ module "ecs_statping" {
   cluster_private_subnets = module.vpc.private_subnets
   cluster_public_subnets  = module.vpc.public_subnets
 
+
   statping_domain   = var.statping_domain
   statping_api_key  = random_password.api_key.result
   statping_services = local.statping_services
+
+  // optional
+  nginx_cpu       = var.nginx_cpu
+  nginx_memory    = var.nginx_memory
+  statping_cpu    = var.statping_cpu
+  statping_memory = var.statping_memory
+
 }
