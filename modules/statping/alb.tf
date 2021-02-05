@@ -76,6 +76,7 @@ resource "aws_alb_listener" "https" {
   port              = 443
   protocol          = "HTTPS"
   certificate_arn   = module.acm[0].this_acm_certificate_arn
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
   default_action {
     target_group_arn = aws_alb_target_group.statping_app.id
     type             = "forward"
