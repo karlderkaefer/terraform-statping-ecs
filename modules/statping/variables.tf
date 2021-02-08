@@ -157,4 +157,8 @@ variable "statping_memory" {
   default     = 256
 }
 
-
+variable "lb_listener_ssl_policy" {
+  description = "SSL policy for ALB listener"
+  default     = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+  type        = string
+}
